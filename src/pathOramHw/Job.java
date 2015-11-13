@@ -23,7 +23,7 @@ public class Job {
 
 	public static void main(String[] args) {
 		int bucket_size = 4;
-		int num_blocks = (int)Math.pow(2, 5);
+		int num_blocks = (int)Math.pow(2, 3);
 		
 		//Set the Bucket size for all the buckets.
 		Bucket.setMaxSize(bucket_size);
@@ -42,14 +42,14 @@ public class Job {
 		
 
 	    //Do some sample computation: fill an array with numbers, read it back.
-		for(int i = 0; i < 5; i++){
-			System.out.println("===Writing Block " + i + 
+		for(int i = 0; i < num_blocks; i++){
+			System.out.println("===\nWriting Block " + i + 
 					" to ORAM.");
 			oram.access(Operation.WRITE, i % num_blocks, sampleData(i) );
 			System.out.println("The stash size is: " + oram.getStashSize());
 		}
 		
-		for(int i = 0; i < 5; i++){
+		for(int i = 0; i < num_blocks; i++){
 			System.out.println("====\nReading Block " + i + " from ORAM.");
 			System.out.println("Value is :" 
 					+ Arrays.toString(oram.access(Operation.READ, i, null)));
@@ -59,7 +59,7 @@ public class Job {
 	
 	private static byte[] sampleData(int i){
 		ByteBuffer bb = ByteBuffer.allocate(24); 
-		bb.putInt(i); 
+		bb.putInt(0,i); 
 		System.out.println("Should expect: " + Arrays.toString(bb.array()));
 		return bb.array();
 	}

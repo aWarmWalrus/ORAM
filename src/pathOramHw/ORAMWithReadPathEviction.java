@@ -1,6 +1,7 @@
 package pathOramHw;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /*
@@ -14,7 +15,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 	private int L;              // Height of binary tree
 	private final int B = 24;   // Size of blocks (in bytes)
 	private int Z;              // Capacity of each bucket (in blocks)
-	private ArrayList<Block> S; // Some stash data structure
+	//private ArrayList<Block> S; // Some stash data structure
 	private HashMap<Integer,Block> S_hm; // Alternative stash data structure
 	private Integer pos_map[];
 
@@ -41,6 +42,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 
 		int capacity = (int)Math.pow(2, L+1) - 1;
 
+		System.out.printf(" >> INITIALIZING ORAM...\n");
 		// Initialize server
 		server.setCapacity(capacity);
 		for (int j = 0; j < capacity; j++) {
@@ -49,18 +51,18 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		}
 
 		// Initialize stash
-		S = new ArrayList<Block>();
+		//S = new ArrayList<Block>();
 		S_hm = new HashMap<Integer, Block>();
 
 		// Debugging printouts
-		System.out.printf(" >> INITIALIZING ORAM...\n");
 		System.out.printf(
 				  "    Number of blocks: %d\n" 
 				+ "    Number of levels: %d\n"
 				+ "    Number of leaves: %d\n"
 				+ "    Capacity : %d\n"
-				+ "    Pos_map head: [%d, %d, %d, %d, ...]\n",
+				+ "    Pos_map_head : [%d, %d, %d, %d ...]\n",
 				this.N, this.L, this.pos_map.length, capacity,
+				//Arrays.toString(this.pos_map));
 				this.pos_map[0], this.pos_map[1],this.pos_map[2],this.pos_map[3]);
 	}
 
@@ -72,17 +74,15 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		pos_map[blockIndex] = rand.getRandomLeaf();
 
 		int node = x + (int)Math.pow(2, L); // Leaf_id to Node pos by adding 2^L
-		System.out.printf(" >> Traversal starts at leaf %d\n", node);
+		//System.out.printf(" >> Traversal starts at leaf %d\n", node);
 
 		// Optimized traversal of the tree, instead of calling P at L levels.
 		do {
-			//System.out.printf(" >> Traversing tree >> Node %d at level %d\n", 
-					//node, log_2_floor(node));
 			ServerReadBucket(node); // Read meaningful blocks at node to stash
 			node = node / 2;
 		} while (node > 0);
 
-		System.out.printf(" >> There are %d blocks in the stash\n", S_hm.size());
+		//System.out.printf(" >> There are %d blocks in the stash\n", S_hm.size());
 
 		// Get the block from the stash
 		Block d = S_hm.get(blockIndex);
@@ -91,9 +91,9 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		if (op == Operation.WRITE) {
 			// If d isn't in the tree, or in the stash:
 			if (d == null) {
-				System.out.printf(" !! Requested block %d doesn't exist yet...\n",
-					blockIndex);
 				d = new Block(pos_map[blockIndex], blockIndex, newdata);
+				//System.out.printf(" !! Created block %d, leaf_id = %d \n",
+				//	blockIndex, pos_map[blockIndex]);
 				S_hm.put(blockIndex, d);
 			} else {
 				System.arraycopy(d.data, 0, newdata, 0, 24);
@@ -114,14 +114,15 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 				Block b = S_hm.get(ind);
 				if (P(b.leaf_id, l) == node) {
 					//S_hm.remove(ind); // Restore block to tree
-					System.out.printf(" >> Adding leaf %d (%d) to tree at bucket %d, level %d from stash\n",
-							b.leaf_id, b.leaf_id + (int)Math.pow(2,L),
-							node, l);
+					//System.out.printf(" >> Adding block %d leaf %d (%d) to "
+					//		+ "tree at bucket %d, level %d from stash\n",
+					//		b.index, b.leaf_id, b.leaf_id + (int)Math.pow(2,L),
+					//		node, l);
 					acc.addBlock(b);
 					count++;
 				}
 				if (count == Z) {
-					System.out.printf(" >> Filled up the bucket!\n");
+					//System.out.printf(" >> Filled up the bucket!\n");
 					break;
 				}
 			}
@@ -223,9 +224,9 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		for (Block b : node_bucket.getBlocks()) {
 			// If it's not a dummy block, add it to the stash
 			if (b.leaf_id != -1 && b.index != -1) {
-				System.out.printf("   > Removing leaf %d index %d level %d from tree\n",
-						b.leaf_id, b.index, log_2_floor(node));
-				S.add(b);
+		//		System.out.printf("   > Removing leaf %d "
+		//				+ "index %d level %d from tree\n",
+		//				b.leaf_id, b.index, log_2_floor(node));
 				S_hm.put(b.index, b);
 			}
 		}
