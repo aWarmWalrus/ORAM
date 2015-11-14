@@ -68,14 +68,15 @@ public class Sim1B {
 
 		System.out.println("   >> Getting on with 500,000,000 accesses");
 		int stashsize= 0;
-		for(int i = 1; i <= 500000000; i++){
+		for(int i = 1; i <= 500_000_000; i++){
 			oram.access(Operation.READ, i % num_blocks, null);
 			stashsize = oram.getStashSize();
 			if (stashsize > max_stash) max_stash = stashsize;
 			if (stashsize > 10000) throw new RuntimeException("WHAT IS HAPPENING :(");
 			stashCount[stashsize]++;
-			if(i % 5_000_000 == 0)
-				System.out.printf("%20d%% complete...\n", i * 100 / 500_000_000);
+			if(i % 500_000 == 0){
+				System.out.printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b%5.1f%% complete...", i / 5_000_000.);
+			}
 		}
 				
 		pw.println("-1, 500000000");

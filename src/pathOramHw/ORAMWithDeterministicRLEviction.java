@@ -107,5 +107,11 @@ public class ORAMWithDeterministicRLEviction implements ORAMInterface{
 	}
 
 	//You may add helper methods.
-	
+	private int log_2_ceil(int n) {
+		return 32 - Integer.numberOfLeadingZeros(n - 1);
+	}
+
+	private int log_2_floor(int n) {
+		return 31 - Integer.numberOfLeadingZeros(n);
+	}
 }

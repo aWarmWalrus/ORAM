@@ -70,13 +70,13 @@ public class Sim3B {
 		int stashsize= 0;
 		
 		for(int i = 1; i <= 500_000_000; i++){
-			//oram.access(Operation.READ, i % num_blocks, null);
+			oram.access(Operation.READ, i % num_blocks, null);
 			stashsize = oram.getStashSize(); 
 			if (stashsize > max_stash) max_stash = stashsize;
 			if (stashsize > 10_000) throw new RuntimeException("WHAT IS HAPPENING :(");
 			stashCount[stashsize]++;
 			if(i % 500_000 == 0){
-				System.out.printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b%5.1f%% complete...", i / 500_000.);
+				System.out.printf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b%5.1f%% complete...", i / 5_000_000.);
 			}
 		}
 		
