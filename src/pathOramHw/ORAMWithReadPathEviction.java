@@ -29,8 +29,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		N = num_blocks; 
 		rand = rand_gen;
 		server = storage;
-		// This is fast integer log. Takes the ceiling of the log.
-		L = log_2_ceil(N);
+		L = log_2_ceil(N); // Uses fast integer log.
 		pos_map = new Integer[ (int)Math.pow(2, L) ];
 
 		// Initialize the position map

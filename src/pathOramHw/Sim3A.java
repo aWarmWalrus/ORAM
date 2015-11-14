@@ -20,12 +20,12 @@ import java.util.Arrays;
 
 import pathOramHw.ORAMInterface.Operation;
 
-public class Sim1B {
+public class Sim3A {
 
 
 	public static void main(String[] args) {
-		int bucket_size = 4;
-		int num_blocks = (int)Math.pow(2, 20);
+		int bucket_size = 2;
+		int num_blocks = (int)Math.pow(2, 10);
 		int stashCount[] = new int[10000];
 		int max_stash = 0;
 		
@@ -46,7 +46,7 @@ public class Sim1B {
 
 		PrintWriter pw;
 		try {
-			pw = new PrintWriter("simulation1B.txt", "UTF-8");
+			pw = new PrintWriter("simulation3A.txt", "UTF-8");
 		} catch (Exception e) {
 			return;
 		}
@@ -66,19 +66,17 @@ public class Sim1B {
 		}
 		System.out.println("   >> Warmup finished!!");
 
-		System.out.println("   >> Getting on with 500,000,000 accesses");
+		System.out.println("   >> Getting on with 500,000 accesses");
 		int stashsize= 0;
-		for(int i = 1; i <= 500000000; i++){
+		for(int i = 0; i < 500_000; i++){
 			oram.access(Operation.READ, i % num_blocks, null);
 			stashsize = oram.getStashSize();
 			if (stashsize > max_stash) max_stash = stashsize;
 			if (stashsize > 10000) throw new RuntimeException("WHAT IS HAPPENING :(");
 			stashCount[stashsize]++;
-			if(i % 5_000_000 == 0)
-				System.out.printf("%20d%% complete...\n", i * 100 / 500_000_000);
 		}
 				
-		pw.println("-1, 500000000");
+		pw.println("-1, 500000");
 		for (int i = 0; i <= max_stash; i++) {
 			int count = 0;
 			for (int j = max_stash; j > i; j--) {
@@ -87,7 +85,7 @@ public class Sim1B {
 			pw.printf("%d, %d\n", i, count);
 		}
 		pw.close();
-		System.out.println(" Yee");
+		System.out.println("Computation completed.");
 	}
 	
 	private static byte[] sampleData(int i){

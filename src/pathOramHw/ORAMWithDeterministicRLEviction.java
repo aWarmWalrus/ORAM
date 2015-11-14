@@ -1,6 +1,7 @@
 package pathOramHw;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /*
  * Name: Charles Qian
@@ -12,9 +13,28 @@ public class ORAMWithDeterministicRLEviction implements ORAMInterface{
 	/**
 	 * TODO add necessary variables 
 	 */
+	private int N;
+	private int L;
+	private final int B = 24;
+	private int Z;
+	private HashMap<Integer,Block> S_hm;
+	private Integer pos_map[];
+
+	private Bucket tree[];
+	private RandForORAMInterface rand;
+	private UntrustedStorageInterface server;
 		
 	public ORAMWithDeterministicRLEviction(UntrustedStorageInterface storage, RandForORAMInterface rand_gen, int bucket_size, int num_blocks){
 		// TODO Complete the constructor
+		Z = bucket_size;
+		N = num_blocks;
+		rand = rand_gen;
+		server = storage;
+		L = log_2_ceil(N);
+		pos_map = new Integer[ (int) Math.pow(2, L) ];
+
+		// Initialize the position map
+		rand_gen.setBound(pos_map.length);
 	}
 		
 	@Override
