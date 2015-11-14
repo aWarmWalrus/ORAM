@@ -25,7 +25,7 @@ public class Sim1A {
 
 	public static void main(String[] args) {
 		int bucket_size = 4;
-		int num_blocks = (int)Math.pow(2, 3);
+		int num_blocks = (int)Math.pow(2, 20);
 		int stashCount[] = new int[10000];
 		int max_stash = 0;
 		
@@ -54,7 +54,6 @@ public class Sim1A {
 		// Warm up the ORAM
 		System.out.println(" == Warming up the ORAM == ");
 		for (int i = 0; i < num_blocks; i++) {
-			System.out.printf("   ~~ Writing %d ~~\n", i % num_blocks);
 			oram.access(Operation.WRITE, i % num_blocks, sampleData(i));
 		}
 		System.out.println("   >> First million done...");
@@ -81,8 +80,13 @@ public class Sim1A {
 				
 		pw.println("-1, 500000");
 		for (int i = 0; i <= max_stash; i++) {
-			pw.printf("%d, %d\n", i, stashCount[i]);
+			int count = 0;
+			for (int j = max_stash; j > i; j--) {
+				count += stashCount[j];
+			}
+			pw.printf("%d, %d\n", i, count);
 		}
+		pw.close();
 		System.out.println(" Yee");
 	}
 	

@@ -73,8 +73,8 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 
 		int node = x + (int)Math.pow(2, L); // Leaf_id to Node pos by adding 2^L
 
-		System.out.printf("    + x: %d\n", x);
-		System.out.printf("    + Pos_map: %s\n", Arrays.toString(pos_map));
+		//System.out.printf("    + x: %d\n", x);
+		//System.out.printf("    + Pos_map: %s\n", Arrays.toString(pos_map));
 
 		// Optimized traversal of the tree, instead of calling P at L levels.
 		do {
@@ -82,7 +82,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			node = node / 2;
 		} while (node > 0);
 
-		System.out.printf(" >> There are %d blocks in the stash\n", S_hm.size());
+		//System.out.printf(" >> There are %d blocks in the stash\n", S_hm.size());
 
 		// Get the block from the stash
 		Block d = S_hm.get(blockIndex);
@@ -92,8 +92,8 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			// If d isn't in the tree, or in the stash:
 			if (d == null) {
 				d = new Block(pos_map[blockIndex], blockIndex, newdata);
-				System.out.printf(" !! Created block %d, leaf_id = %d \n",
-					blockIndex, pos_map[blockIndex]);
+				//System.out.printf(" !! Created block %d, leaf_id = %d \n",
+				//	blockIndex, pos_map[blockIndex]);
 				S_hm.put(blockIndex, d);
 			} else {
 				System.arraycopy(d.data, 0, newdata, 0, 24);
@@ -115,10 +115,10 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			for (Integer ind : S_hm.keySet()) {
 				Block b = S_hm.get(ind);
 				if (P(b.leaf_id, l) == node) {
-					System.out.printf(" >> Adding block %d leaf %d (%d) to "
-							+ "tree at bucket %d, level %d from stash\n",
-							b.index, b.leaf_id, b.leaf_id + (int)Math.pow(2,L),
-							node, l);
+					//System.out.printf(" >> Adding block %d leaf %d (%d) to "
+					//		+ "tree at bucket %d, level %d from stash\n",
+					//		b.index, b.leaf_id, b.leaf_id + (int)Math.pow(2,L),
+					//		node, l);
 					acc.addBlock(new Block(b));
 					count++;
 				}
@@ -226,9 +226,9 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		for (Block b : node_bucket.getBlocks()) {
 			// If it's not a dummy block, add it to the stash
 			if (b.leaf_id != -1 && b.index != -1) {
-				System.out.printf("   > Removing index %d "
-						+ "leaf %d level %d from tree\n",
-						b.index, b.leaf_id, log_2_floor(node));
+				//System.out.printf("   > Removing index %d "
+				//		+ "leaf %d level %d from tree\n",
+				//		b.index, b.leaf_id, log_2_floor(node));
 				S_hm.put(b.index, b);
 			}
 		}
