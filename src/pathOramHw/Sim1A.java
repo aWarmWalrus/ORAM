@@ -25,7 +25,7 @@ public class Sim1A {
 
 	public static void main(String[] args) {
 		int bucket_size = 4;
-		int num_blocks = (int)Math.pow(2, 20);
+		int num_blocks = (int)Math.pow(2, 3);
 		int stashCount[] = new int[10000];
 		int max_stash = 0;
 		
@@ -54,6 +54,7 @@ public class Sim1A {
 		// Warm up the ORAM
 		System.out.println(" == Warming up the ORAM == ");
 		for (int i = 0; i < num_blocks; i++) {
+			System.out.printf("   ~~ Writing %d ~~\n", i % num_blocks);
 			oram.access(Operation.WRITE, i % num_blocks, sampleData(i));
 		}
 		System.out.println("   >> First million done...");
@@ -68,10 +69,10 @@ public class Sim1A {
 
 		System.out.println("   >> Getting on with 500,000 accesses");
 		int stashsize= 0;
-		for(int i = 0; i < num_blocks; i++){
-			System.out.println("====\nReading Block " + i + " from ORAM.");
-			System.out.println("Value is :" 
-					+ Arrays.toString(oram.access(Operation.READ, i, null)));
+		for(int i = 0; i < 500000; i++){
+			//System.out.println("====\nReading Block " + i + " from ORAM.");
+			//System.out.printf("%d\n", i % num_blocks);
+			oram.access(Operation.READ, i % num_blocks, null);
 			stashsize = oram.getStashSize();
 			if (stashsize > max_stash) max_stash = stashsize;
 			if (stashsize > 10000) throw new RuntimeException("WHAT IS HAPPENING :(");

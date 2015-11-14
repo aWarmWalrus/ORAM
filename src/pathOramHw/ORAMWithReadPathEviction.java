@@ -15,7 +15,6 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 	private int L;              // Height of binary tree
 	private final int B = 24;   // Size of blocks (in bytes)
 	private int Z;              // Capacity of each bucket (in blocks)
-	//private ArrayList<Block> S; // Some stash data structure
 	private HashMap<Integer,Block> S_hm; // Alternative stash data structure
 	private Integer pos_map[];
 
@@ -51,7 +50,6 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		}
 
 		// Initialize stash
-		//S = new ArrayList<Block>();
 		S_hm = new HashMap<Integer, Block>();
 
 		// Debugging printouts
@@ -74,7 +72,9 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		pos_map[blockIndex] = rand.getRandomLeaf();
 
 		int node = x + (int)Math.pow(2, L); // Leaf_id to Node pos by adding 2^L
-		//System.out.printf(" >> Traversal starts at leaf %d\n", node);
+
+		System.out.printf("    + x: %d\n", x);
+		System.out.printf("    + Pos_map: %s\n", Arrays.toString(pos_map));
 
 		// Optimized traversal of the tree, instead of calling P at L levels.
 		do {
@@ -82,7 +82,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			node = node / 2;
 		} while (node > 0);
 
-		//System.out.printf(" >> There are %d blocks in the stash\n", S_hm.size());
+		System.out.printf(" >> There are %d blocks in the stash\n", S_hm.size());
 
 		// Get the block from the stash
 		Block d = S_hm.get(blockIndex);
@@ -92,8 +92,8 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			// If d isn't in the tree, or in the stash:
 			if (d == null) {
 				d = new Block(pos_map[blockIndex], blockIndex, newdata);
-				//System.out.printf(" !! Created block %d, leaf_id = %d \n",
-				//	blockIndex, pos_map[blockIndex]);
+				System.out.printf(" !! Created block %d, leaf_id = %d \n",
+					blockIndex, pos_map[blockIndex]);
 				S_hm.put(blockIndex, d);
 			} else {
 				System.arraycopy(d.data, 0, newdata, 0, 24);
@@ -102,23 +102,24 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 			throw new RuntimeException("Attempting to read a block that hasn't been initialized");
 		}
 
+		d.leaf_id = pos_map[blockIndex];
+
 		// Place as much of the stash into the server as possible
 		node = x + (int)Math.pow(2,L); // restore node to be the node val of x
 		do {
 			// node is essentially the value P(x,l)
-			// and l = log_2_floor(node)
+			// where l = log_2_floor(node)
 			int l = log_2_floor(node);
 			int count = 0;
 			Bucket acc = new Bucket();
 			for (Integer ind : S_hm.keySet()) {
 				Block b = S_hm.get(ind);
 				if (P(b.leaf_id, l) == node) {
-					//S_hm.remove(ind); // Restore block to tree
-					//System.out.printf(" >> Adding block %d leaf %d (%d) to "
-					//		+ "tree at bucket %d, level %d from stash\n",
-					//		b.index, b.leaf_id, b.leaf_id + (int)Math.pow(2,L),
-					//		node, l);
-					acc.addBlock(b);
+					System.out.printf(" >> Adding block %d leaf %d (%d) to "
+							+ "tree at bucket %d, level %d from stash\n",
+							b.index, b.leaf_id, b.leaf_id + (int)Math.pow(2,L),
+							node, l);
+					acc.addBlock(new Block(b));
 					count++;
 				}
 				if (count == Z) {
@@ -134,6 +135,7 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 				}
 			}
 			ServerWriteBucket(node, acc);
+			//try {Thread.sleep(1000);} catch (Exception e) {}
 			node = node / 2;
 		} while (node > 0);
 
@@ -224,9 +226,9 @@ public class ORAMWithReadPathEviction implements ORAMInterface{
 		for (Block b : node_bucket.getBlocks()) {
 			// If it's not a dummy block, add it to the stash
 			if (b.leaf_id != -1 && b.index != -1) {
-		//		System.out.printf("   > Removing leaf %d "
-		//				+ "index %d level %d from tree\n",
-		//				b.leaf_id, b.index, log_2_floor(node));
+				System.out.printf("   > Removing index %d "
+						+ "leaf %d level %d from tree\n",
+						b.index, b.leaf_id, log_2_floor(node));
 				S_hm.put(b.index, b);
 			}
 		}
