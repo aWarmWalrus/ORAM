@@ -53,15 +53,15 @@ public class Sim3A {
 
 		// Warm up the ORAM
 		System.out.println(" == Warming up the ORAM == ");
-		for (int i = 0; i < num_blocks; i++) {
+		for (int i = 0; i < (int)Math.pow(2,20); i++) {
 			oram.access(Operation.WRITE, i % num_blocks, sampleData(i));
 		}
 		System.out.println("   >> First million done...");
-		for (int i = 0; i < num_blocks; i++) {
+		for (int i = 0; i < (int)Math.pow(2,20); i++) {
 			oram.access(Operation.WRITE, i % num_blocks, sampleData(i));
 		}
 		System.out.println("   >> Second million done...");
-		for (int i = 0; i < num_blocks; i++) {
+		for (int i = 0; i < (int)Math.pow(2,20); i++) {
 			oram.access(Operation.WRITE, i % num_blocks, sampleData(i));
 		}
 		System.out.println("   >> Warmup finished!!");

@@ -51,15 +51,15 @@ public class Sim2B {
 
 		PrintWriter pw;
 		try {
-			pw = new PrintWriter("simulation2A.txt", "UTF-8");
+			pw = new PrintWriter("simulation2B.txt", "UTF-8");
 		} catch (Exception e) {
 			return;
 		}			
 		
 		System.out.println("   >> Warmup finished!!");
 
-		System.out.println("   >> Getting on with 500,000,000 accesses\n"+
-				"     We will record stash size every 5,000,000 accesses.\n  0.0% complete...");
+		System.out.printf("   >> Getting on with 500,000,000 accesses\n"+
+				"     We will record stash size every 5,000,000 accesses.\n  0.0%% complete...");
 		int stashsize= 0;
 		for(int i = 0; i < 500_000_000; i++){
 			oram.access(Operation.READ, i % num_blocks, null);
